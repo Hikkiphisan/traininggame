@@ -42,6 +42,7 @@ window.addEventListener('load', function () {
             this.x = 0;
             this.y = 280  //lấy khung hoạt động trừ khi chiều cao kích thước của nhân vật ta sẽ biết được vị trí hiện tại của đối tượng
             this.hinhanh = document.getElementById('nhanvatchinh');
+            this.frameY = 0
             this.frameX = 0;
             this.frameY = 3;
             this.speed = 0;
@@ -50,13 +51,14 @@ window.addEventListener('load', function () {
         }
 
         draw(noidung) { //draw dùng để vẽ và quản lý nội dung trên canvas, context là người dùng gọi,nằm trong class người chơi để vẽ canvas cho người chơi.
-            noidung.fillRect(this.x, this.y, this.width, this.height)  //fillrext dùng để vẽ hình chữ nhật
-            noidung.fillStyle = "white";
+            // noidung.fillRect(this.x, this.y, this.width, this.height)  //fillrext dùng để vẽ hình chữ nhật
+            // noidung.fillStyle = "white";
             noidung.drawImage(this.hinhanh, this.frameX * this.width, this.frameY * this.height,this.width, this.height, this.x, this.y, this.width, this.height)
         }
 //this.x, this.y, this.width, this.height chỉ có tác dụng chính cho cả hình ảnh ấy, vậy nên phải thêm 4 chỉ số mới đằng trước để cắt nhỏ hình ảnh sx,sy,sw, sh
         update(nhapnut) {
-            this.x += this.speed;
+            // if (this.frameX >= this.maxFrame) this.frameX = 0;
+            // else this.frameX++;
             if (nhapnut.keys.indexOf('ArrowRight') > -1) {
                 this.speed = 5 }
             else if(nhapnut.keys.indexOf('ArrowLeft') > -1) {
@@ -119,47 +121,63 @@ window.addEventListener('load', function () {
             this.width = 128;
             this.height = 128;
             this.hinhanh = document.getElementById("kedich");
-
-            this.x = this.gameWidth - 100;
+            this.x = this.gameWidth;
             this.y = this.gameHeight - this.height;
-
-            this.frameX = 0
-            this.frameY = 0
+            this.frameX = 0;
+            this.maxFrame = 5;
+            this.fps = 20
+            this.frameTimer = 0;
+            this.frameInterval = 1000/this.fps;
+            this.speed = 8;
         }
         draw(noidung) {
-            noidung.drawImage(this.hinhanh, 0, 0, 128, 128, this.x, this.y, this.width, this.height)
+            noidung.drawImage(this.hinhanh, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height)
         }
-        update() {
-            this.x--;
+        update(deltaTime) {
+            if (this.frameTimer > this.frameInterval) {
+                if (this.frameX >= this.maxFrame) this.frameX = 0;
+                else this.frameX++;
+                this.frameTimer = 0;
+            } else {
+                this.frameTimer += deltaTime;
+            }
+            this.x -= this.speed;
         }
     }
-    nhomkedich.push(new kedich(canvas.width,canvas.height));
-    function xulykedich() {
 
+    function xulykedich(deltaTime) {
+        if (enemyTimer > enemyInterval + randomEnemyInterval) {
+            nhomkedich.push(new kedich(canvas.width, canvas.height));
+            randomEnemyInterval = Math.random() * 1000 + 500
+            enemyTimer = 0;
+        } else {
+            enemyTimer += deltaTime;
+        }
         nhomkedich.forEach(kedich => {
             kedich.draw(ctx);
-            kedich.update();
+            kedich.update(deltaTime);
         })
     }
-
-
-
-
-
 
 
     const nhapnut = new Nhapnutbanphim();
     const nguoichoi = new nhanvatchinh(canvas.width, canvas.height);  //cao và rộng của canvas để gán vào biến khung hình ban đầu.
     const phongnen = new background(canvas.width, canvas.height);
 
-    function animate() {
+    let lastTime = 0;
+    let enemyTimer = 0;
+    let enemyInterval = 1000;
+    let randomEnemyInterval = Math.random() * 1000 + 500;
+    function animate(timeStamp) {
+        const deltaTime = timeStamp - lastTime;
+        //delta là dấu thời gian từ vòng lặp này trừ đi dấu thời gian từ vòng lặp trước.
+        lastTime = timeStamp;
         ctx.clearRect(0,0, canvas.width, canvas.height)
-        phongnen.draw(ctx)  //đặt nền lên trước giông như xếp layer ấy
+        phongnen.draw(ctx);  //đặt nền lên trước giông như xếp layer ấy
         phongnen.update();
         nguoichoi.draw(ctx);  //ctx này lấy ở dòng 3 để vẽ 2d với hình như noidung miêu tả.
         nguoichoi.update(nhapnut);
-
-        xulykedich();
+        xulykedich(deltaTime);
         requestAnimationFrame(animate)
 
     }
