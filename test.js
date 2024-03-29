@@ -59,16 +59,6 @@ window.addEventListener('load', function () {
         }
 
         draw(noidung) { //draw dùng để vẽ và quản lý nội dung trên canvas, context là người dùng gọi,nằm trong class người chơi để vẽ canvas cho người chơi.
-            // noidung.strokeStyle = "white";
-            // noidung.strokeRect(this.x,this.y,this.width,this.height)
-            // noidung.beginPath();
-            // noidung.arc(this.x + this.width/2.1,
-            //             this.y +this.height/1.3,
-            //          this.width/3,
-            //     0,
-            //     Math.PI * 3);
-            // noidung.stroke();
-
             noidung.drawImage(this.hinhanh, this.frameX * this.width, this.frameY * this.height,this.width, this.height, this.x, this.y, this.width, this.height)
         }
         //this.x, this.y, this.width, this.height chỉ có tác dụng chính cho cả hình ảnh ấy, vậy nên phải thêm 4 chỉ số mới đằng trước để cắt nhỏ hình ảnh sx,sy,sw, sh
@@ -180,15 +170,7 @@ window.addEventListener('load', function () {
         }
 
         draw(noidung) {
-            // noidung.strokeStyle = "white";
-            // noidung.strokeRect(this.x,this.y,this.width,this.height)
-            // noidung.beginPath(); // nó bắt đầu một đường path mới hoặc đặt lại đường path hiện tại của ngữ cảnh vẽ, bất kỳ dòng vẽ hay hình dạng nào được thực hiện sau beginPath() sẽ bắt đầu từ một điểm mới, không ảnh hưởng đến những gì đã được vẽ trước đó.
-            // noidung.arc(this.x + this.width/1.6,    //method sử dụng để vẽ một đoạn đường cong hoặc một hình tròn.
-            //     this.y +this.height/1.3,
-            //     this.width/3,
-            //     0,
-            //     Math.PI * 3);
-            // noidung.stroke();
+
 
             noidung.drawImage(this.hinhanh, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height)
         }
